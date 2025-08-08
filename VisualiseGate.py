@@ -23,26 +23,41 @@ def initOrAppend( target, events, branch ):
 xVals = None
 yVals = None
 zVals = None
-visVals = None
+rVals = None
+gVals = None
+bVals = None
 for events in uproot.iterate( sys.argv[1] + ":Coincidences" ):
 
   xVals = initOrAppend( xVals, events, "globalPosX" )
   yVals = initOrAppend( yVals, events, "globalPosY" )
   zVals = initOrAppend( zVals, events, "globalPosZ" )
-  #visVals = initOrAppend( visVals, events, "crystalID" )
-  #visVals = initOrAppend( visVals, events, "rsectorID" )
-  visVals = initOrAppend( visVals, events, "submoduleID" )
+  rVals = initOrAppend( rVals, events, "crystalID" )
+  gVals = initOrAppend( gVals, events, "rsectorID" )
+  bVals = initOrAppend( bVals, events, "submoduleID" )
   #visVals = initOrAppend( visVals, events, "moduleID" )
 
 
 # Turn columns into 2D arrays [ [x,y,z], ... ]
 # Normalise value to use for colours
 coordinates = np.column_stack( [ xVals, yVals, zVals ] )
-colours = np.column_stack( [ np.zeros( len(visVals)),
-                             visVals / np.max( visVals ),
-                             np.zeros( len(visVals)) ] )
+colours = np.column_stack( [ rVals / np.max( rVals ),
+                             gVals / np.max( gVals ),
+                             bVals / np.max( bVals ) ] )
 
-print( xVals[0], yVals[0], zVals[0], coordinates[0], visVals[0], colours[0] )
+print( xVals[0], yVals[0], zVals[0], coordinates[0], rVals[0], gVals[0], bVals[0], colours[0] )
+
+
+########################
+# fiducial marker
+# x red y green z blue
+
+for i in range(50):
+  coordinates = np.append( coordinates, [[i,0,0]], axis=0 )
+  colours = np.append( colours, [[1,0,0]], axis=0 )
+  coordinates = np.append( coordinates, [[0,i,0]], axis=0 )
+  colours = np.append( colours, [[0,1,0]], axis=0 )
+  coordinates = np.append( coordinates, [[0,0,i]], axis=0 )
+  colours = np.append( colours, [[0,0,1]], axis=0 )
 
 
 ########################
